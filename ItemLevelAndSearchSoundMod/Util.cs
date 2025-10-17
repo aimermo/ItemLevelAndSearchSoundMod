@@ -15,42 +15,43 @@ namespace ItemLevelAndSearchSoundMod
                 value = item.Value / 2f;
                 if (item.name.StartsWith("Bullet_"))
                 {
+                    // 子弹一次会掉落很多，价值按30格计算
                     value *= 30;
                 }
             }
             if (value >= 10000)
             {
-                // 53
+                // 范围内53个道具
                 return ItemValueLevel.Red;
             }
             else if (value >= 5000)
             {
-                // 84
+                // 范围内84个道具
                 return ItemValueLevel.LightRed;
             }   
             else if (value >= 2500)
             {
-                // 90
+                // 范围内90个道具
                 return ItemValueLevel.Orange;
             }
             else if (value >= 1200)
             {
-                // 146
+                // 范围内146个道具
                 return ItemValueLevel.Purple;
             }
             else if (value >= 600)
             {
-                // 177
+                // 范围内177个道具
                 return ItemValueLevel.Blue;
             }
             else if (value >= 200)
             {
-                // 253
+                // 范围内253个道具
                 return ItemValueLevel.Green;
             }
             else
             {
-                // 376
+                // 范围内376个道具
                 return ItemValueLevel.White;
             }
         }
@@ -122,12 +123,6 @@ namespace ItemLevelAndSearchSoundMod
                 default:
                     return ModBehaviour.Low;
             }
-        }
-
-        public static float GetSfxVolume(ItemValueLevel level)
-        {
-            AudioManager.Bus sfxBus = (AudioManager.Bus) typeof(AudioManager).GetField("sfxBus", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(AudioManager.Instance);
-            return sfxBus.Volume;
         }
     }
 }

@@ -18,9 +18,11 @@ namespace ItemLevelAndSearchSoundMod
     public class ModBehaviour : Duckov.Modding.ModBehaviour
     {
         private const string Id = "Spuddy.ItemLevelAndSearchSoundMod";
+        public const string Low = "UI/click";
+        public const string Medium = "UI/sceneloader_click";
+        public const string High = "UI/game_start";
 
         public static bool IsLooting = false;
-        public static AudioSource InspectedSound;
         public static Color White;
         public static Color Green;
         public static Color Blue;
@@ -28,10 +30,6 @@ namespace ItemLevelAndSearchSoundMod
         public static Color Orange;
         public static Color LightRed;
         public static Color Red;
-
-        public const string Low = "UI/click";
-        public const string Medium = "UI/sceneloader_click";
-        public const string High = "UI/game_start";
 
         private Harmony harmony;
 
@@ -54,22 +52,22 @@ namespace ItemLevelAndSearchSoundMod
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
-        private void OnStartLoot(InteractableLootbox lootbox)
-        {
-            IsLooting = true;
-        }
-
-        void OnStopLoot(InteractableLootbox lootbox)
-        {
-            IsLooting = false;
-        }
-
-        void OnDisable()
+        private void OnDisable()
         {
             harmony.UnpatchAll(Id);
 
             InteractableLootbox.OnStartLoot -= OnStartLoot;
             InteractableLootbox.OnStopLoot -= OnStopLoot;
+        }
+
+        private void OnStartLoot(InteractableLootbox lootbox)
+        {
+            IsLooting = true;
+        }
+
+        private void OnStopLoot(InteractableLootbox lootbox)
+        {
+            IsLooting = false;
         }
     }
 }
