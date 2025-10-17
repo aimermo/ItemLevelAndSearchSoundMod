@@ -22,6 +22,6 @@ Make the looting experience more exciting! This Mod is designed for "Escape from
 
 ### For Non-Steam Users
 
-1. Go to the [Release](https://github.com/dzj0821/ItemLevelAndSearchSoundMod/Release) page and download the Mod archive
+1. Go to the [Release](https://github.com/dzj0821/ItemLevelAndSearchSoundMod/releases) page and download the Mod archive
 2. In your game installation directory, create a `Mods` folder inside the `Duckov_Data` folder (if it doesn't already exist), and extract the Mod archive there. The final structure should be: `Duckov_Data->Mods->ItemLevelAndSearchSoundMod->ItemLevelAndSearchSoundMod.dll`
 3. Launch the game, go to the Mods section in the main menu, and enable the Mod
