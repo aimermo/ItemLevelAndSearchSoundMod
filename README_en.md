@@ -13,6 +13,13 @@ Make the looting experience more exciting! This Mod is designed for "Escape from
 - Searching is no longer bland, with new rarity-based search sounds
 - Balanced container opening times, now better reflecting the value of items inside
 
+Custom search sounds are now supported. Setup instructions:
+1. Create a folder named ItemLevelAndSearchSoundMod in the game’s installation directory.
+2. Place your sound files inside it — for example: 0.mp3 replaces the search sound for white rarity items. (1 = green, 2 = blue, 3 = purple, 4 = gold, 5 = light red, 6 = dark red)
+3. Restart the game (if it’s currently running).
+
+If there’s an issue loading the custom sounds, an error message will appear in red text at the top-left corner of the screen.
+
 ## How to Use
 
 ### For Steam Users
