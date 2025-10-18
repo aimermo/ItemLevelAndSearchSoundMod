@@ -11,6 +11,11 @@ namespace ItemLevelAndSearchSoundMod
             {
                 return ItemValueLevel.White;
             }
+            if (item.TypeID == 308 || item.TypeID == 309)
+            {
+                // 冷核碎片 赤核碎片
+                return ItemValueLevel.White;
+            }
             // 除2得到售价
             float value = item.Value / 2f;
 

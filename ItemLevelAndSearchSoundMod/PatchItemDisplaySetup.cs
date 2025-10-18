@@ -1,6 +1,7 @@
 using System;
 using Duckov;
 using Duckov.UI;
+using FMOD;
 using HarmonyLib;
 using ItemStatsSystem;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace ItemLevelAndSearchSoundMod
             ItemValueLevel level = Util.GetItemValueLevel(target);
             Color color = Util.GetItemValueLevelColor(level);
 
-            if (target != null && ModBehaviour.IsLooting && !target.Inspected)
+            if (target != null && target.InInventory != null && target.InInventory.NeedInspection && !target.Inspected)
             {
                 Color originalColor = color;
                 color = ModBehaviour.White;
@@ -32,7 +33,22 @@ namespace ItemLevelAndSearchSoundMod
                     {
                         item.onInspectionStateChanged -= OnInspectionStateChanged;
                         SetColor(__instance, originalColor);
-                        AudioManager.Post(Util.GetInspectedSound(level));
+                        if (ModBehaviour.ItemValueLevelSound.TryGetValue(level, out Sound sound))
+                        {
+                            RESULT result = FMODUnity.RuntimeManager.CoreSystem.playSound(sound, new ChannelGroup(), false, out Channel channel);
+                            if (result != RESULT.OK)
+                            {
+                                ModBehaviour.ErrorMessage += "FMOD failed to play sound: " + result + "\n";
+                            }
+                            else
+                            {
+                                channel.setVolume(AudioManager.GetBus("Master/SFX").Volume);
+                            }
+                        }
+                        else
+                        {
+                            AudioManager.Post(Util.GetInspectedSound(level));
+                        }
                     }
                 }
             }
@@ -48,7 +64,7 @@ namespace ItemLevelAndSearchSoundMod
             }
             catch (Exception ex)
             {
-                Debug.LogError("ItemLevelAndSearchSoundMod Patch SetColor Error: " + ex.Message);
+                UnityEngine.Debug.LogError("ItemLevelAndSearchSoundMod Patch SetColor Error: " + ex.Message);
             }
         }
     }

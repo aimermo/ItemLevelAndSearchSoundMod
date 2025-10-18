@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Duckov.Utilities;
 using HarmonyLib;
 using ItemStatsSystem;

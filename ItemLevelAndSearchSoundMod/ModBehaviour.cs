@@ -1,5 +1,8 @@
-﻿using HarmonyLib;
+﻿using FMOD;
+using HarmonyLib;
 using ItemStatsSystem;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
@@ -13,7 +16,9 @@ namespace ItemLevelAndSearchSoundMod
         public const string Medium = "UI/sceneloader_click";
         public const string High = "UI/game_start";
 
-        public static bool IsLooting = false;
+        public static Dictionary<ItemValueLevel, Sound> ItemValueLevelSound = new Dictionary<ItemValueLevel, Sound>();
+        public static string ErrorMessage = "";
+
         public static Color White;
         public static Color Green;
         public static Color Blue;
@@ -26,10 +31,30 @@ namespace ItemLevelAndSearchSoundMod
 
         private void OnEnable()
         {
-            Debug.Log("ItemLevelAndSearchSoundMod OnEnable");
+            UnityEngine.Debug.Log("ItemLevelAndSearchSoundMod OnEnable");
 
-            InteractableLootbox.OnStartLoot += OnStartLoot;
-            InteractableLootbox.OnStopLoot += OnStopLoot;
+            try
+            {
+                foreach (ItemValueLevel item in Enum.GetValues(typeof(ItemValueLevel)))
+                {
+                    string path = $"ItemLevelAndSearchSoundMod/{(int) item}.mp3";
+                    if (File.Exists(path))
+                    {
+                        var soundResult = FMODUnity.RuntimeManager.CoreSystem.createSound(path, MODE.LOOP_OFF, out Sound sound);
+                        if (soundResult != RESULT.OK)
+                        {
+                            ErrorMessage += "FMOD failed to create sound: " + soundResult + "\n";
+                            continue;
+                        }
+                        ItemValueLevelSound.Add(item, sound);
+                        UnityEngine.Debug.Log("ItemLevelAndSearchSoundMod Load Custom Sound Success: " + item);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorMessage += e.ToString() + "\n";
+            }
 
             ColorUtility.TryParseHtmlString("#FFFFFF00", out White);
             ColorUtility.TryParseHtmlString("#7cff7c40", out Green);
@@ -43,22 +68,25 @@ namespace ItemLevelAndSearchSoundMod
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
+        private void OnGUI()
+        {
+            if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                var errorStyle = new GUIStyle(GUI.skin.label);
+                errorStyle.normal.textColor = Color.red;
+                GUI.Label(new Rect(10, 10, Screen.width - 10, Screen.height - 10), "ItemLevelAndSearchSoundMod Error: \n" + ErrorMessage, errorStyle);
+            }
+        }
+
         private void OnDisable()
         {
             harmony.UnpatchAll(Id);
 
-            InteractableLootbox.OnStartLoot -= OnStartLoot;
-            InteractableLootbox.OnStopLoot -= OnStopLoot;
-        }
-
-        private void OnStartLoot(InteractableLootbox lootbox)
-        {
-            IsLooting = true;
-        }
-
-        private void OnStopLoot(InteractableLootbox lootbox)
-        {
-            IsLooting = false;
+            foreach (var sound in ItemValueLevelSound)
+            {
+                sound.Value.release();
+            }
+            ItemValueLevelSound.Clear();
         }
     }
 }
