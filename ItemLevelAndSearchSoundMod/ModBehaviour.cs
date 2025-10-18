@@ -1,6 +1,5 @@
 ﻿using FMOD;
 using HarmonyLib;
-using ItemStatsSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +14,17 @@ namespace ItemLevelAndSearchSoundMod
         public const string Low = "UI/click";
         public const string Medium = "UI/sceneloader_click";
         public const string High = "UI/game_start";
+
+        /// <summary>
+        /// 背景色正常显示，但是搜索时间和音效强制按白色稀有度计算的物品Id列表
+        /// </summary>
+        public static readonly int[] ForceWhiteLevelTypeID = new int[]{ 
+            308, // 冷核碎片
+            309, // 赤核碎片
+            368, // 虚化的羽毛
+            394, // 计算核心
+            890  // 狗牌
+        };
 
         public static Dictionary<ItemValueLevel, Sound> ItemValueLevelSound = new Dictionary<ItemValueLevel, Sound>();
         public static string ErrorMessage = "";

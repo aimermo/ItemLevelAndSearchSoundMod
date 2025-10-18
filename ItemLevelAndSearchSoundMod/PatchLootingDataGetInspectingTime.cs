@@ -1,3 +1,4 @@
+using System.Linq;
 using Duckov.Utilities;
 using HarmonyLib;
 using ItemStatsSystem;
@@ -9,7 +10,11 @@ namespace ItemLevelAndSearchSoundMod
     {
         static void Postfix(GameplayDataSettings.LootingData __instance, Item item, ref float __result)
         {
-            ItemValueLevel valueLevel = Util.GetItemValueLevel(item);
+            ItemValueLevel valueLevel = ItemValueLevel.White;
+            if (item == null || !ModBehaviour.ForceWhiteLevelTypeID.Contains(item.TypeID))
+            {
+                valueLevel = Util.GetItemValueLevel(item);
+            }
             __result = Util.GetInspectingTime(valueLevel);
         }
     }

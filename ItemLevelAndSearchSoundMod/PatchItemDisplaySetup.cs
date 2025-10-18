@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Duckov;
 using Duckov.UI;
 using FMOD;
@@ -33,9 +34,16 @@ namespace ItemLevelAndSearchSoundMod
                     {
                         item.onInspectionStateChanged -= OnInspectionStateChanged;
                         SetColor(__instance, originalColor);
-                        if (ModBehaviour.ItemValueLevelSound.TryGetValue(level, out Sound sound))
+
+                        ItemValueLevel playSoundLevel = level;
+                        if (ModBehaviour.ForceWhiteLevelTypeID.Contains(target.TypeID))
                         {
-                            RESULT result = FMODUnity.RuntimeManager.CoreSystem.playSound(sound, new ChannelGroup(), false, out Channel channel);
+                            playSoundLevel = ItemValueLevel.White;
+                        }
+                        if (ModBehaviour.ItemValueLevelSound.TryGetValue(playSoundLevel, out Sound sound))
+                        {
+                            FMODUnity.RuntimeManager.GetBus("bus:/Master/SFX").getChannelGroup(out ChannelGroup sfxGroup);
+                            RESULT result = FMODUnity.RuntimeManager.CoreSystem.playSound(sound, sfxGroup, false, out Channel channel);
                             if (result != RESULT.OK)
                             {
                                 ModBehaviour.ErrorMessage += "FMOD failed to play sound: " + result + "\n";
@@ -47,7 +55,7 @@ namespace ItemLevelAndSearchSoundMod
                         }
                         else
                         {
-                            AudioManager.Post(Util.GetInspectedSound(level));
+                            AudioManager.Post(Util.GetInspectedSound(playSoundLevel));
                         }
                     }
                 }
