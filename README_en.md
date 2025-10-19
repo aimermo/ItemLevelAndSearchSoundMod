@@ -20,6 +20,8 @@ Custom search sounds are now supported. Setup instructions:
 
 If there’s an issue loading the custom sounds, an error message will appear in red text at the top-left corner of the screen.
 
+To disable the Mod's custom item search duration, simply create a file named `DisableModSearchTime.txt` in `<game installation directory>/ItemLevelAndSearchSoundMod/`.
+
 ## How to Use
 
 ### For Steam Users

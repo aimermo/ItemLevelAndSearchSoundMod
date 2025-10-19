@@ -17,6 +17,8 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576
 
 如果加载自定义音效出现问题，错误信息会以红字显示在屏幕左上角。
 
+如果想要禁用MOD调整的搜索时长，创建 <游戏安装目录>/ItemLevelAndSearchSoundMod/DisableModSearchTime.txt 文件即可。
+
 ## 使用方法
 
 ### Steam平台玩家
