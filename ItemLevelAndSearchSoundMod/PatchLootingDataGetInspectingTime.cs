@@ -10,6 +10,10 @@ namespace ItemLevelAndSearchSoundMod
     {
         static void Postfix(GameplayDataSettings.LootingData __instance, Item item, ref float __result)
         {
+            if (ModBehaviour.DisableModSearchTime)
+            {
+                return;
+            }
             ItemValueLevel valueLevel = ItemValueLevel.White;
             if (item == null || !ModBehaviour.ForceWhiteLevelTypeID.Contains(item.TypeID))
             {

@@ -190,26 +190,21 @@ namespace ItemLevelAndSearchSoundMod
             }
         }
 
-        public static string GetInspectedSound(ItemValueLevel level)
+        public static (string, float) GetInspectedSound(ItemValueLevel level)
         {
             switch (level)
             {
                 case ItemValueLevel.Red:
-                    return ModBehaviour.High;
                 case ItemValueLevel.LightRed:
-                    return ModBehaviour.High;
                 case ItemValueLevel.Orange:
-                    return ModBehaviour.High;
+                    return (ModBehaviour.High, 1f);
                 case ItemValueLevel.Purple:
-                    return ModBehaviour.Medium;
                 case ItemValueLevel.Blue:
-                    return ModBehaviour.Medium;
+                    return (ModBehaviour.Medium, 3f);
                 case ItemValueLevel.Green:
-                    return ModBehaviour.Low;
                 case ItemValueLevel.White:
-                    return ModBehaviour.Low;
                 default:
-                    return ModBehaviour.Low;
+                    return (ModBehaviour.Low, 5f);
             }
         }
     }

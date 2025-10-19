@@ -1,4 +1,6 @@
-﻿using FMOD;
+﻿using Duckov.UI.Animations;
+using Duckov.Utilities;
+using FMOD;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -11,9 +13,18 @@ namespace ItemLevelAndSearchSoundMod
     public class ModBehaviour : Duckov.Modding.ModBehaviour
     {
         private const string Id = "Spuddy.ItemLevelAndSearchSoundMod";
-        public const string Low = "UI/click";
+        public const string Low = "UI/hover";
         public const string Medium = "UI/sceneloader_click";
         public const string High = "UI/game_start";
+
+        /// <summary>
+        /// 原本的搜索动画参数
+        /// </summary>
+        public static float DefaultSearchAnimationValue;
+        /// <summary>
+        /// 关闭自定义搜索时长
+        /// </summary>
+        public static bool DisableModSearchTime;
 
         /// <summary>
         /// 背景色正常显示，但是搜索时间和音效强制按白色稀有度计算的物品Id列表
@@ -42,6 +53,18 @@ namespace ItemLevelAndSearchSoundMod
         private void OnEnable()
         {
             UnityEngine.Debug.Log("ItemLevelAndSearchSoundMod OnEnable");
+
+            DisableModSearchTime = File.Exists("ItemLevelAndSearchSoundMod/DisableModSearchTime.txt");
+
+            var magnifier = GameplayDataSettings.UIPrefabs.ItemDisplay.transform.Find("InspectioningIndicator/Magnifier");
+            if (magnifier != null)
+            {
+                var revolver = magnifier.GetComponent<Revolver>();
+                if (revolver != null)
+                {
+                    DefaultSearchAnimationValue = revolver.rPM;
+                }
+            }
 
             try
             {

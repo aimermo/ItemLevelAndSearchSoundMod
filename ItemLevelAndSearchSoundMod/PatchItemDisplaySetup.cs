@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Duckov;
 using Duckov.UI;
+using Duckov.UI.Animations;
 using FMOD;
 using HarmonyLib;
 using ItemStatsSystem;
@@ -13,6 +15,7 @@ namespace ItemLevelAndSearchSoundMod
     [HarmonyPatch(typeof(ItemDisplay), "Setup")]
     public class PatchItemDisplaySetup
     {
+        private static HashSet<ItemDisplay> updatedAnimationItemDisplays = new HashSet<ItemDisplay>();
         static void Postfix(ItemDisplay __instance, Item target)
         {
             if (__instance == null)
@@ -24,6 +27,20 @@ namespace ItemLevelAndSearchSoundMod
             {
                 SetColor(__instance, Util.GetItemValueLevelColor(ItemValueLevel.White));
                 return;
+            }
+
+            if (!updatedAnimationItemDisplays.Contains(__instance))
+            {
+                updatedAnimationItemDisplays.Add(__instance);
+                var magnifier = __instance.transform.Find("InspectioningIndicator/Magnifier");
+                if (magnifier != null)
+                {
+                    var revolver = magnifier.GetComponent<Revolver>();
+                    if (revolver != null)
+                    {
+                        revolver.rPM = ModBehaviour.DefaultSearchAnimationValue * 0.75f;
+                    }
+                }
             }
 
             ItemValueLevel level = Util.GetItemValueLevel(target);
@@ -61,14 +78,16 @@ namespace ItemLevelAndSearchSoundMod
                             {
                                 ModBehaviour.ErrorMessage += "FMOD failed to play sound: " + result + "\n";
                             }
-                            else
-                            {
-                                channel.setVolume(AudioManager.GetBus("Master/SFX").Volume);
-                            }
                         }
                         else
                         {
-                            AudioManager.Post(Util.GetInspectedSound(playSoundLevel));
+                            (string eventName, float volume) = Util.GetInspectedSound(playSoundLevel);
+                            if (AudioManager.TryCreateEventInstance(eventName, out var eventInstance))
+                            {
+                                eventInstance.setVolume(volume);
+                                eventInstance.start();
+                                eventInstance.release();
+                            }
                         }
                     }
                 }
