@@ -19,8 +19,16 @@ namespace ItemLevelAndSearchSoundMod
             {
                 return;
             }
+
+            if (target == null)
+            {
+                SetColor(__instance, Util.GetItemValueLevelColor(ItemValueLevel.White));
+                return;
+            }
+
             ItemValueLevel level = Util.GetItemValueLevel(target);
             Color color = Util.GetItemValueLevelColor(level);
+            int id = target.TypeID;
 
             if (target != null && target.InInventory != null && target.InInventory.NeedInspection && !target.Inspected)
             {
@@ -30,6 +38,11 @@ namespace ItemLevelAndSearchSoundMod
 
                 void OnInspectionStateChanged(Item item)
                 {
+                    if (item.TypeID != id || !item.InInventory.NeedInspection)
+                    {
+                        // 自动拾取Mod会在不触发onInspectionStateChanged的情况下拾取道具，Item会回到对象池，事件就会留到下次触发，这里校验是不是同一个对象，以及所属容器是否需要搜索
+                        return;
+                    }
                     if (item.Inspected)
                     {
                         item.onInspectionStateChanged -= OnInspectionStateChanged;
