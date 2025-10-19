@@ -7,11 +7,8 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576
 
 ## Introduction
 
-Make the looting experience more exciting! This Mod is designed for "Escape from Duckov", introducing an item rarity classification system based on the value of each item. Discover exciting treasures with a fresh sense of thrill and achievement. Additionally, search times have been rebalanced, and immersive search sound effects have been added to make looting even more realistic and engaging!
-
-- Automatically determines item rarity based on item value—rare items are immediately recognizable
-- Searching is no longer bland, with new rarity-based search sounds
-- Balanced container opening times, now better reflecting the value of items inside
+Make the looting experience more exciting!
+This mod adds a rarity display to in-game items (based on their value), recalibrates search duration, and adds search sound effects.
 
 Custom search sounds are now supported. Setup instructions:
 1. Create a folder named ItemLevelAndSearchSoundMod in the game’s installation directory.

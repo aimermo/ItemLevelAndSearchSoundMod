@@ -16,6 +16,7 @@ namespace ItemLevelAndSearchSoundMod
     public class PatchItemDisplaySetup
     {
         private static HashSet<ItemDisplay> updatedAnimationItemDisplays = new HashSet<ItemDisplay>();
+        private static Dictionary<Item, ItemDisplay> itemDisplayMap = new Dictionary<Item, ItemDisplay>();
         static void Postfix(ItemDisplay __instance, Item target)
         {
             if (__instance == null)
@@ -28,6 +29,11 @@ namespace ItemLevelAndSearchSoundMod
                 SetColor(__instance, Util.GetItemValueLevelColor(ItemValueLevel.White));
                 return;
             }
+
+            // 情况1. 在搜索中关闭了容器，之后再打开容器，OnInspectionStateChanged事件未消耗
+            // 情况2. 自动拾取Mod会在不触发onInspectionStateChanged的情况下拾取道具，Item会回到对象池，事件就会留到下次触发
+            target.onInspectionStateChanged -= OnInspectionStateChanged;
+            itemDisplayMap.Remove(target);
 
             if (!updatedAnimationItemDisplays.Contains(__instance))
             {
@@ -43,57 +49,59 @@ namespace ItemLevelAndSearchSoundMod
                 }
             }
 
+            if (target.InInventory != null && target.InInventory.NeedInspection && !target.Inspected)
+            {
+                // 物品还未搜索的情况
+                target.onInspectionStateChanged += OnInspectionStateChanged;
+                itemDisplayMap[target] = __instance;
+
+                SetColor(__instance, Util.GetItemValueLevelColor(ItemValueLevel.White));
+                return;
+            }
+
             ItemValueLevel level = Util.GetItemValueLevel(target);
             Color color = Util.GetItemValueLevelColor(level);
-            int id = target.TypeID;
+            SetColor(__instance, color);
+        }
 
-            if (target != null && target.InInventory != null && target.InInventory.NeedInspection && !target.Inspected)
+        static void OnInspectionStateChanged(Item item)
+        {
+            if (!itemDisplayMap.TryGetValue(item, out ItemDisplay itemDisplay))
             {
-                Color originalColor = color;
-                color = ModBehaviour.White;
-                target.onInspectionStateChanged += OnInspectionStateChanged;
+                return;
+            }
+            if (item.Inspected)
+            {
+                item.onInspectionStateChanged -= OnInspectionStateChanged;
+                ItemValueLevel level = Util.GetItemValueLevel(item);
+                Color color = Util.GetItemValueLevelColor(level);
+                SetColor(itemDisplay, color);
 
-                void OnInspectionStateChanged(Item item)
+                ItemValueLevel playSoundLevel = level;
+                if (ModBehaviour.ForceWhiteLevelTypeID.Contains(item.TypeID))
                 {
-                    if (item.TypeID != id || !item.InInventory.NeedInspection)
+                    playSoundLevel = ItemValueLevel.White;
+                }
+                if (ModBehaviour.ItemValueLevelSound.TryGetValue(playSoundLevel, out Sound sound))
+                {
+                    FMODUnity.RuntimeManager.GetBus("bus:/Master/SFX").getChannelGroup(out ChannelGroup sfxGroup);
+                    RESULT result = FMODUnity.RuntimeManager.CoreSystem.playSound(sound, sfxGroup, false, out Channel channel);
+                    if (result != RESULT.OK)
                     {
-                        // 自动拾取Mod会在不触发onInspectionStateChanged的情况下拾取道具，Item会回到对象池，事件就会留到下次触发，这里校验是不是同一个对象，以及所属容器是否需要搜索
-                        return;
+                        ModBehaviour.ErrorMessage += "FMOD failed to play sound: " + result + "\n";
                     }
-                    if (item.Inspected)
+                }
+                else
+                {
+                    (string eventName, float volume) = Util.GetInspectedSound(playSoundLevel);
+                    if (AudioManager.TryCreateEventInstance(eventName, out var eventInstance))
                     {
-                        item.onInspectionStateChanged -= OnInspectionStateChanged;
-                        SetColor(__instance, originalColor);
-
-                        ItemValueLevel playSoundLevel = level;
-                        if (ModBehaviour.ForceWhiteLevelTypeID.Contains(target.TypeID))
-                        {
-                            playSoundLevel = ItemValueLevel.White;
-                        }
-                        if (ModBehaviour.ItemValueLevelSound.TryGetValue(playSoundLevel, out Sound sound))
-                        {
-                            FMODUnity.RuntimeManager.GetBus("bus:/Master/SFX").getChannelGroup(out ChannelGroup sfxGroup);
-                            RESULT result = FMODUnity.RuntimeManager.CoreSystem.playSound(sound, sfxGroup, false, out Channel channel);
-                            if (result != RESULT.OK)
-                            {
-                                ModBehaviour.ErrorMessage += "FMOD failed to play sound: " + result + "\n";
-                            }
-                        }
-                        else
-                        {
-                            (string eventName, float volume) = Util.GetInspectedSound(playSoundLevel);
-                            if (AudioManager.TryCreateEventInstance(eventName, out var eventInstance))
-                            {
-                                eventInstance.setVolume(volume);
-                                eventInstance.start();
-                                eventInstance.release();
-                            }
-                        }
+                        eventInstance.setVolume(volume);
+                        eventInstance.start();
+                        eventInstance.release();
                     }
                 }
             }
-
-            SetColor(__instance, color);
         }
 
         static void SetColor(ItemDisplay __instance, Color color)
