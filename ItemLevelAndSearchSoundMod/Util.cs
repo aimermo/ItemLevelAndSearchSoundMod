@@ -19,6 +19,11 @@ namespace ItemLevelAndSearchSoundMod
                 // 子弹特殊处理
                 if (item.DisplayQuality != DisplayQuality.None)
                 {
+                    if (item.DisplayQuality == DisplayQuality.Orange)
+                    {
+                        // 6级特种弹
+                        return ItemValueLevel.LightRed;
+                    }
                     // 有官方稀有度的子弹，使用官方的稀有度
                     return ParseDisplayQuality(item.DisplayQuality);
                 }
@@ -47,14 +52,21 @@ namespace ItemLevelAndSearchSoundMod
                 // 装备特殊处理
                 if (item.Tags.Contains("Special"))
                 {
-                    // 特殊装备
                     if (item.name.Contains("StormProtection"))
                     {
                         // 风暴系列的装备稀有度直接使用官方的
                         return (ItemValueLevel) (item.Quality - 1);
                     }
-                    // 其他全部按价值计算
-                    return CalculateItemValueLevel((int)value);
+                    int quality = item.Quality - 2;
+                    if (quality > 6)
+                    {
+                        return ItemValueLevel.Red;
+                    }
+                    if (quality < 0)
+                    {
+                        return ItemValueLevel.White;
+                    }
+                    return (ItemValueLevel) quality;
                 }
                 else
                 {
@@ -68,6 +80,23 @@ namespace ItemLevelAndSearchSoundMod
                 }
             }
 
+            if (item.Tags.Contains("Accessory"))
+            {
+                // 配件特殊处理
+                if (item.Quality <= 7)
+                {
+                    return (ItemValueLevel) (item.Quality - 1);
+                }
+
+                return ParseDisplayQuality(item.DisplayQuality);
+            }
+
+            if (item.TypeID == 862)
+            {
+                // 带火AK-47的价格和普通AK-47是一样的，特殊处理下
+                return ItemValueLevel.Orange;
+            }
+            
             // 物品价值
             ItemValueLevel itemValueLevel = CalculateItemValueLevel((int)value);
 

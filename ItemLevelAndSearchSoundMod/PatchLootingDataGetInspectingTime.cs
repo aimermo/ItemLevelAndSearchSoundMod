@@ -18,6 +18,11 @@ namespace ItemLevelAndSearchSoundMod
             if (item == null || !ModBehaviour.ForceWhiteLevelTypeID.Contains(item.TypeID))
             {
                 valueLevel = Util.GetItemValueLevel(item);
+                if (valueLevel > ItemValueLevel.Orange && item != null && item.Tags.Contains("Bullet"))
+                {
+                    // 子弹搜索时间最多为金色物品时间
+                    valueLevel = ItemValueLevel.Orange;
+                }
             }
             __result = Util.GetInspectingTime(valueLevel);
         }

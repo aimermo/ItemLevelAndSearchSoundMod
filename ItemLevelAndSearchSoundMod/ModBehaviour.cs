@@ -93,7 +93,7 @@ namespace ItemLevelAndSearchSoundMod
             ColorUtility.TryParseHtmlString("#7cff7c40", out Green);
             ColorUtility.TryParseHtmlString("#7cd5ff40", out Blue);
             ColorUtility.TryParseHtmlString("#d0acff40", out Purple);
-            ColorUtility.TryParseHtmlString("#ffe60096", out Orange);
+            ColorUtility.TryParseHtmlString("#ffdc2496", out Orange);
             ColorUtility.TryParseHtmlString("#ff585896", out LightRed);
             ColorUtility.TryParseHtmlString("#bb000096", out Red);
 
