@@ -38,6 +38,10 @@ namespace ItemLevelAndSearchSoundMod
         };
 
         public static Dictionary<ItemValueLevel, Sound> ItemValueLevelSound = new Dictionary<ItemValueLevel, Sound>();
+        /// <summary>
+        /// 搜索中播放的音效
+        /// </summary>
+        public static Sound SearchingSound;
         public static string ErrorMessage = "";
 
         public static Color White;
@@ -68,6 +72,21 @@ namespace ItemLevelAndSearchSoundMod
 
             try
             {
+                // 加载搜索中的音效 (7.mp3)，使用循环模式
+                string searchingSoundPath = "ItemLevelAndSearchSoundMod/7.mp3";
+                if (File.Exists(searchingSoundPath))
+                {
+                    var soundResult = FMODUnity.RuntimeManager.CoreSystem.createSound(searchingSoundPath, MODE.LOOP_NORMAL, out SearchingSound);
+                    if (soundResult != RESULT.OK)
+                    {
+                        ErrorMessage += "FMOD failed to create searching sound: " + soundResult + "\n";
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("ItemLevelAndSearchSoundMod Load Searching Sound Success");
+                    }
+                }
+
                 foreach (ItemValueLevel item in Enum.GetValues(typeof(ItemValueLevel)))
                 {
                     string path = $"ItemLevelAndSearchSoundMod/{(int) item}.mp3";
@@ -114,6 +133,11 @@ namespace ItemLevelAndSearchSoundMod
         private void OnDisable()
         {
             harmony.UnpatchAll(Id);
+
+            if (SearchingSound.hasHandle())
+            {
+                SearchingSound.release();
+            }
 
             foreach (var sound in ItemValueLevelSound)
             {
