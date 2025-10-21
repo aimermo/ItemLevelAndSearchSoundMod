@@ -22,8 +22,6 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576
 
 
 
-# 音效文件
-
 ## 某洲游原版音效(包含搜索+出货)
 
 [下载链接](https://wwgo.lanzouo.com/b00q0ydbde)   密码:aimer
