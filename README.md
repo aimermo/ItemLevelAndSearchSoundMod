@@ -2,7 +2,7 @@
 
 [English ReadMe](./README_en.md)
 
-**创意工坊地址**:  
+**创意工坊地址**:
 https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576
 
 ## 简介
@@ -19,15 +19,6 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576
 如果加载自定义音效出现问题，错误信息会以红字显示在屏幕左上角。
 
 如果想要禁用MOD调整的搜索时长，创建 <游戏安装目录>/ItemLevelAndSearchSoundMod/DisableModSearchTime.txt 文件即可。
-
-
-
-# 音效文件
-
-## 某洲游原版音效(包含搜索+出货)
-
-[下载链接](https://wwgo.lanzouo.com/b00q0ydbde)   密码:aimer
-
 
 
 ## 使用方法
